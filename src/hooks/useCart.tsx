@@ -69,9 +69,25 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const removeProduct = (productId: number) => {
     try {
-      // TODO
+      const cartInstance = [...cart];
+      const existentProduct = cart.find((cartItem) => cartItem.id === productId)
+
+      if (existentProduct) {
+        cartInstance.map((cartItem) => {
+          if (cartItem.id !== existentProduct?.id) {
+            return cartItem
+          }
+        })
+        setCart(cartInstance)
+        localStorage.setItem('@RocketShoes:cart', JSON.stringify(cartInstance))
+      } else {
+        toast.error('Erro na remoção do produto');
+      }
+
+      
     } catch {
       // TODO
+      toast.error('Erro na remoção do produto');
     }
   };
 
