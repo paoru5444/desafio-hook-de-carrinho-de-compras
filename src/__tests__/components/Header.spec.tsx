@@ -33,7 +33,7 @@ jest.mock('../../hooks/useCart', () => {
   };
 });
 
-describe('Header Component', () => {
+describe('Header Component SUT', () => {
   it('should be able to render the amount of products added to cart', () => {
     const { getByTestId } = render(<Header />);
 

@@ -23,11 +23,11 @@ const CartContext = createContext<CartContextData>({} as CartContextData);
 
 export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const [cart, setCart] = useState<Product[]>(() => {
-    // const storagedCart = Buscar dados do localStorage
+    const storagedCart = localStorage.getItem('@RocketShoes:cart')
 
-    // if (storagedCart) {
-    //   return JSON.parse(storagedCart);
-    // }
+    if (storagedCart) {
+      return JSON.parse(storagedCart);
+    }
 
     return [];
   });
@@ -35,8 +35,35 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const addProduct = async (productId: number) => {
     try {
       // TODO
+      const cartInstance = [...cart];
+      const existentProduct = cart.find((cartItem) => cartItem.id === productId)
+
+      if(existentProduct) {
+        const stock = await api.get(`/stock/${productId}`);
+        if (existentProduct.amount < stock.data.amount) {
+          cartInstance.map((cartItem: Product) => {
+            if (cartItem.id === existentProduct.id) {
+              cartItem.amount += 1;
+              return cartItem
+            }
+            return cartItem;
+          })
+        } else {
+          toast.error('Quantidade solicitada fora de estoque');
+          return
+        }
+      } else {
+        const product = await api.get(`/products/${productId}`);
+        const newCartItem = {
+          ...product.data,
+          amount: 1,
+        }
+        cartInstance.push(newCartItem)
+      }
+      setCart(cartInstance)
+      localStorage.setItem('@RocketShoes:cart', JSON.stringify(cartInstance))
     } catch {
-      // TODO
+      toast.error('Erro na adição do produto')
     }
   };
 
@@ -49,13 +76,15 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
   };
 
   const updateProductAmount = async ({
-    productId,
+    productId: id,
     amount,
   }: UpdateProductAmount) => {
     try {
-      // TODO
-    } catch {
-      // TODO
+      const products = await api.get('/products');
+      console.log('PRODUCTS', products);
+      setCart([...cart])
+    } catch(error) {
+      console.log(error)
     }
   };
 

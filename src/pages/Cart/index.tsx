@@ -4,6 +4,7 @@ import {
   MdAddCircleOutline,
   MdRemoveCircleOutline,
 } from 'react-icons/md';
+import { useCart } from '../../hooks/useCart';
 
 // import { useCart } from '../../hooks/useCart';
 // import { formatPrice } from '../../util/format';
@@ -18,7 +19,7 @@ interface Product {
 }
 
 const Cart = (): JSX.Element => {
-  // const { cart, removeProduct, updateProductAmount } = useCart();
+  const { cart, removeProduct, updateProductAmount } = useCart();
 
   // const cartFormatted = cart.map(product => ({
   //   // TODO
@@ -30,8 +31,11 @@ const Cart = (): JSX.Element => {
   //     }, 0)
   //   )
 
-  function handleProductIncrement(product: Product) {
-    // TODO
+  function handleProductIncrement({ id: productId, amount }: Product) {
+    updateProductAmount({
+      productId,
+      amount
+    })
   }
 
   function handleProductDecrement(product: Product) {
@@ -82,7 +86,7 @@ const Cart = (): JSX.Element => {
                 <button
                   type="button"
                   data-testid="increment-product"
-                // onClick={() => handleProductIncrement()}
+                  // onClick={() => handleProductIncrement()}
                 >
                   <MdAddCircleOutline size={20} />
                 </button>
