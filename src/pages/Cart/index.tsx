@@ -4,10 +4,9 @@ import {
   MdAddCircleOutline,
   MdRemoveCircleOutline,
 } from 'react-icons/md';
-import { useCart } from '../../hooks/useCart';
 
-// import { useCart } from '../../hooks/useCart';
-// import { formatPrice } from '../../util/format';
+import { useCart } from '../../hooks/useCart';
+import { formatPrice } from '../../util/format';
 import { Container, ProductTable, Total } from './styles';
 
 interface Product {
@@ -24,12 +23,13 @@ const Cart = (): JSX.Element => {
   // const cartFormatted = cart.map(product => ({
   //   // TODO
   // }))
-  // const total =
-  //   formatPrice(
-  //     cart.reduce((sumTotal, product) => {
-  //       // TODO
-  //     }, 0)
-  //   )
+  const total =
+    formatPrice(
+      cart.reduce((sumTotal, product) => {
+        // TODO
+        return sumTotal += product.price
+      }, 0)
+    )
 
   function handleProductIncrement({ id: productId, amount }: Product) {
     updateProductAmount({
@@ -63,13 +63,13 @@ const Cart = (): JSX.Element => {
         </thead>
         <tbody>
           {cart.map((product) => (
-            <tr data-testid="product">
+            <tr data-testid="product" key={product.id}>
               <td>
                 <img src="https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis1.jpg" alt="Tênis de Caminhada Leve Confortável" />
               </td>
               <td>
-                <strong>Tênis de Caminhada Leve Confortável</strong>
-                <span>R$ 179,90</span>
+                <strong>{product.title}</strong>
+                <span>{formatPrice(product.price)}</span>
               </td>
               <td>
                 <div>
@@ -85,7 +85,7 @@ const Cart = (): JSX.Element => {
                     type="text"
                     data-testid="product-amount"
                     readOnly
-                    value={2}
+                    value={product.amount}
                   />
                   <button
                     type="button"
@@ -97,7 +97,7 @@ const Cart = (): JSX.Element => {
                 </div>
               </td>
               <td>
-                <strong>R$ 359,80</strong>
+                <strong>{formatPrice(product.price * product.amount)}</strong>
               </td>
               <td>
                 <button
@@ -118,7 +118,7 @@ const Cart = (): JSX.Element => {
 
         <Total>
           <span>TOTAL</span>
-          <strong>R$ 359,80</strong>
+          <strong>{total}</strong>
         </Total>
       </footer>
     </Container>
